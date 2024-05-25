@@ -1,0 +1,35 @@
+import java.util.*;
+public class task1java {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Random rand = new Random();
+        boolean play = true;
+        System.out.println("Welcome to the Number Game!!");
+        int answer = rand.nextInt(100) + 1;
+        while (play) {
+            int attempts = 0;
+            System.out.println("Guess the number between 1 and 100");
+            int guess = sc.nextInt();
+            attempts++;
+            if (guess < 1 || guess > 100) {
+                System.out.println("Please enter a number between 1 and 100.");
+                continue;
+            }
+            if (guess == answer) {
+                System.out.println("Yes,You guessed it right");
+                break;
+            } else if (guess < answer) {
+                System.out.println("Too low!Try Again");
+            } else {
+                System.out.println("Too High!Try Again");
+            }
+        }
+        System.out.print("Do you want to play again? (y/n):");
+        String response = sc.next().toLowerCase();
+        if (response.equals( "no")) {
+            play = false;
+            System.out.println("Game Ends Here!Hope you enjoyed!!");
+        }
+        sc.close();
+    }
+}
