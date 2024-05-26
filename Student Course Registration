@@ -1,0 +1,221 @@
+COURSE.JAVA
+public class Course {
+    private String code;
+    private String title;
+    private String description;
+    private int capacity;
+    private int enrolled;
+    private String schedule;
+
+    public Course(String code, String title, String description, int capacity, String schedule) {
+        this.code = code;
+        this.title = title;
+        this.description = description;
+        this.capacity = capacity;
+        this.schedule = schedule;
+        this.enrolled = 0;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getEnrolled() {
+        return enrolled;
+    }
+
+    public String getSchedule() {
+        return schedule;
+    }
+
+    public boolean registerStudent() {
+        if (enrolled < capacity) {
+            enrolled++;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean dropStudent() {
+        if (enrolled > 0) {
+            enrolled--;
+            return true;
+        }
+        return false;
+    }
+
+    public String toString() {
+        return String.format("%s: %s\n%s\nCapacity: %d, Enrolled: %d\nSchedule: %s",
+                code, title, description, capacity, enrolled, schedule);
+    }
+}
+STUDENT.JAVA
+public class Student {
+    private String studentID;
+    private String name;
+    private List<Course> registeredCourses;
+
+    public Student(String studentID, String name) {
+        this.studentID = studentID;
+        this.name = name;
+        this.registeredCourses = new ArrayList<>();
+    }
+
+    public String getStudentID() {
+        return studentID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Course> getRegisteredCourses() {
+        return registeredCourses;
+    }
+
+    public boolean registerCourse(Course course) {
+        if (course.registerStudent()) {
+            registeredCourses.add(course);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean dropCourse(Course course) {
+        if (registeredCourses.contains(course) && course.dropStudent()) {
+            registeredCourses.remove(course);
+            return true;
+        }
+        return false;
+    }
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Student ID: %s\nName: %s\nRegistered Courses:\n", studentID, name));
+        for (Course course : registeredCourses) {
+            sb.append(course.getTitle()).append("\n");
+        }
+        return sb.toString();
+    }
+}
+COURSEMANAGER.JAVA
+public class CourseManager {
+    private List<Course> courses;
+    private List<Student> students;
+
+    public CourseManager() {
+        courses = new ArrayList<>();
+        students = new ArrayList<>();
+    }
+
+    public void addCourse(Course course) {
+        courses.add(course);
+    }
+
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
+    public void displayCourses() {
+        for (Course course : courses) {
+            System.out.println(course);
+        }
+    }
+
+    public Student findStudent(String studentID) {
+        for (Student student : students) {
+            if (student.getStudentID().equals(studentID)) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    public Course findCourse(String courseCode) {
+        for (Course course : courses) {
+            if (course.getCode().equals(courseCode)) {
+                return course;
+            }
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        CourseManager manager = new CourseManager();
+        manager.addCourse(new Course("CS101", "Introduction to Computer Science", "Basics of computer science", 30, "MWF 9-10 AM"));
+        manager.addCourse(new Course("CS102", "Data Structures", "Introduction to data structures", 25, "TTh 11-12:30 PM"));
+        manager.addCourse(new Course("CS103", "Algorithms", "Introduction to algorithms", 20, "MWF 10-11 AM"));
+        manager.addStudent(new Student("S001", "Alice"));
+        manager.addStudent(new Student("S002", "Bob"));
+ Scanner scanner = new Scanner(System.in);
+        String command;
+while (true) {
+            System.out.println("\nCommands: list, register, drop, student, exit");
+            System.out.print("Enter command: ");
+            command = scanner.nextLine();
+
+            if (command.equals("list")) {
+                manager.displayCourses();
+            } else if (command.equals("register")) {
+                System.out.print("Enter student ID: ");
+                String studentID = scanner.nextLine();
+                System.out.print("Enter course code: ");
+                String courseCode = scanner.nextLine();
+
+                Student student = manager.findStudent(studentID);
+                Course course = manager.findCourse(courseCode);
+
+                if (student != null && course != null) {
+                    if (student.registerCourse(course)) {
+                        System.out.println("Registration successful.");
+                    } else {
+                        System.out.println("Course is full.");
+                    }
+                } else {
+                    System.out.println("Invalid student ID or course code.");
+                }
+            } else if (command.equals("drop")) {
+                System.out.print("Enter student ID: ");
+                String studentID = scanner.nextLine();
+                System.out.print("Enter course code: ");
+                String courseCode = scanner.nextLine();
+
+                Student student = manager.findStudent(studentID);
+                Course course = manager.findCourse(courseCode);
+
+                if (student != null && course != null) {
+                    if (student.dropCourse(course)) {
+                        System.out.println("Course dropped successfully.");
+                    } else {
+                        System.out.println("Course not found in student's registered courses.");
+                    }
+                } else {
+                    System.out.println("Invalid student ID or course code.");
+                }
+            } else if (command.equals("student")) {
+                System.out.print("Enter student ID: ");
+                String studentID = scanner.nextLine();
+                Student student = manager.findStudent(studentID);
+
+                if (student != null) {
+                    System.out.println(student);
+                } else {
+                    System.out.println("Student not found.");
+                }
+            } else if (command.equals("exit")) {
+                break;
+            } else {
+                System.out.println("Unknown command.");
+            }
+        }
